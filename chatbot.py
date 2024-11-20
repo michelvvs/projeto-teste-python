@@ -15,13 +15,20 @@
 
 
 from openai import OpenAI
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
-client = OpenAI()
-stream = client.chat.completions.create(
+openai_api_key = os.getenv("OPENAI_KEY")
+
+client = OpenAI(api_key = openai_api_key)
+response = client.chat.completions.create(
     model="gpt-4o-mini",
-    messages=[{"role": "user", "content": "Say this is a test"}],
-    stream=True,
+    messages=[{"role": "user", "content": "quantos anos tinha einstein quando morreu?"}],
+    seed=1,
+    temperature=0.0,
+    max_tokens=1000
 )
-for chunk in stream:
-    if chunk.choices[0].delta.content is not None:
-        print(chunk.choices[0].delta.content, end="")
+response = response.choices[0].message.content
+
+print(response)
